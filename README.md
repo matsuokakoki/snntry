@@ -191,6 +191,8 @@ If you use this code, please cite:
 }
 ```
 
+Note: Update the author name and year when publishing.
+
 ## License
 
 See LICENSE file for details.

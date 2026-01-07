@@ -1,6 +1,10 @@
 """
 Main experiment script for patient-wise k-fold evaluation.
-Compares SNN with CNN baseline and demonstrates SNN advantages.
+Runs four key experiments:
+1. Patient-wise k-fold cross-validation
+2. SNN vs CNN performance comparison
+3. Noise robustness evaluation
+4. STDP-based online adaptation demonstration
 """
 
 import sys

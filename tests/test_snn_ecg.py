@@ -1,5 +1,5 @@
 """
-Quick test script to validate the SNN-ECG implementation.
+Comprehensive test script to validate the SNN-ECG implementation.
 """
 
 import sys

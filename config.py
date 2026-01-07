@@ -58,4 +58,4 @@ PERFORMANCE_TARGETS = {
 }
 
 # Noise robustness test
-NOISE_LEVELS = [0.0, 0.05, 0.1, 0.15, 0.2]  # SNR levels for testing
+NOISE_LEVELS = [0.0, 0.05, 0.1, 0.15, 0.2]  # Noise standard deviation levels for testing

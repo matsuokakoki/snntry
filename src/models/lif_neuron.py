@@ -33,7 +33,7 @@ class LIFNeuron(nn.Module):
         # Synaptic weights with better initialization
         self.fc = nn.Linear(input_size, output_size, bias=True)
         
-        # Xavier/Glorot initialization for better training
+        # Xavier normal initialization for better gradient flow
         nn.init.xavier_normal_(self.fc.weight)
         nn.init.zeros_(self.fc.bias)
         

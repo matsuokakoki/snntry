@@ -111,7 +111,8 @@ class ECGDataLoader:
         """
         Load MIT-BIH Arrhythmia Database.
         
-        Note: This is a placeholder. In practice, use wfdb library:
+        Note: Currently returns synthetic data as a placeholder.
+        In practice, use wfdb library:
         - wfdb.rdrecord() to read ECG signals
         - wfdb.rdann() to read annotations
         - Process annotations to create binary labels (normal vs anomaly)
