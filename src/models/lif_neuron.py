@@ -72,9 +72,16 @@ class LIFNeuron(nn.Module):
         # Update membrane potential: V(t+1) = α*V(t) + I(t+1)
         self.mem = self.alpha * self.mem + self.syn
         
-        # Generate spikes and reset
+        # Generate spikes and reset with straight-through estimator
+        # Forward: binary spikes, Backward: sigmoid approximation
         spikes = (self.mem >= self.threshold).float()
-        self.mem = self.mem * (1.0 - spikes)  # Reset spiked neurons
+        
+        # Straight-through estimator for gradient flow
+        # Use surrogate gradient: approximate spike function with sigmoid
+        surrogate_grad = torch.sigmoid(10 * (self.mem - self.threshold))
+        spikes = spikes - surrogate_grad.detach() + surrogate_grad
+        
+        self.mem = self.mem * (1.0 - spikes.detach())  # Reset with detached spikes
         
         return spikes
     

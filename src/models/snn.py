@@ -145,10 +145,15 @@ class RateEncoder(nn.Module):
         # Expand to time dimension
         x_expanded = x_norm.unsqueeze(1).repeat(1, self.time_steps, 1)
         
-        # Generate Poisson spikes
-        spike_train = torch.rand_like(x_expanded) < x_expanded
+        # Generate Poisson spikes with detached randomness for gradient flow
+        # Use straight-through estimator: forward uses spikes, backward uses rates
+        rand_vals = torch.rand_like(x_expanded)
+        spike_train = (rand_vals < x_expanded).float()
         
-        return spike_train.float()
+        # Straight-through estimator: substitute gradient
+        spike_train = spike_train - x_expanded.detach() + x_expanded
+        
+        return spike_train
 
 
 class LatencyEncoder(nn.Module):
