@@ -30,8 +30,12 @@ class LIFNeuron(nn.Module):
         self.threshold = threshold
         self.dt = dt
         
-        # Synaptic weights
+        # Synaptic weights with better initialization
         self.fc = nn.Linear(input_size, output_size, bias=True)
+        
+        # Xavier/Glorot initialization for better training
+        nn.init.xavier_normal_(self.fc.weight)
+        nn.init.zeros_(self.fc.bias)
         
         # Decay factors
         self.alpha = torch.exp(torch.tensor(-dt / tau_mem))
@@ -72,16 +76,18 @@ class LIFNeuron(nn.Module):
         # Update membrane potential: V(t+1) = α*V(t) + I(t+1)
         self.mem = self.alpha * self.mem + self.syn
         
-        # Generate spikes and reset with straight-through estimator
-        # Forward: binary spikes, Backward: sigmoid approximation
+        # Generate spikes and reset with surrogate gradient
+        # Forward: binary spikes, Backward: fast sigmoid approximation
         spikes = (self.mem >= self.threshold).float()
         
-        # Straight-through estimator for gradient flow
-        # Use surrogate gradient: approximate spike function with sigmoid
-        surrogate_grad = torch.sigmoid(10 * (self.mem - self.threshold))
+        # Surrogate gradient: approximate spike function with fast sigmoid
+        # Using scale factor for better gradient magnitude
+        scale = 5.0
+        surrogate_grad = torch.sigmoid(scale * (self.mem - self.threshold))
         spikes = spikes - surrogate_grad.detach() + surrogate_grad
         
-        self.mem = self.mem * (1.0 - spikes.detach())  # Reset with detached spikes
+        # Reset membrane for neurons that spiked (detached to stop gradient)
+        self.mem = self.mem - spikes.detach() * self.threshold
         
         return spikes
     
